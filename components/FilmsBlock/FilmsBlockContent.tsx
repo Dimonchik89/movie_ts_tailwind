@@ -1,60 +1,62 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
-import { bindActionCreators } from "@reduxjs/toolkit";
-import { createStructuredSelector } from 'reselect';
-import { connect, ConnectedProps } from "react-redux";
-import {fetchMainTrand, mainTrand, loading, error} from "../../store/mainTrand";
-import { AppDispatch } from "../../store/store";
-import BlurImage from "../BlurImage/BlurImage";
-import Link from "next/link";
+import { Box, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import FilmsBlockCard from "./FilmsBlockCard";
+import Loading from "../Loading/Loading";
 
-interface FilmsBlockContentProps extends FilmsContentsReduxProps {
-
+interface FilmsBlockContentProps {
+    films: Array<ISearchMovie>;
+    loading: boolean;
+    error: boolean;
+    param: string;
 }
 
-const FilmsBlockContent: React.FC<FilmsBlockContentProps> = ({fetchMainTrand, mainTrand, loading, error}) => {
+const FilmsBlockContent: React.FC<FilmsBlockContentProps> = ({films, loading, error, param}) => {
     const carouselRef = useRef<HTMLElement>()
     const testRef = useRef<HTMLElement>()
+    const [checkedCard, setCheckedCard] = useState<number | null>(null)
 
-    useEffect(() => {
-        fetchMainTrand(`${process.env.NEXT_PUBLIC_BASE_URL}/trending/all/day?language=en-US`)
-    }, [])
+    const handleChangeCheckedCard = (id: number) => {
+        if(id === checkedCard) {
+            setCheckedCard(null)
+        } else {
+            setCheckedCard(id)
+        }
+    }
 
-    carouselRef.current?.addEventListener("scroll", (e) => {
-        // console.log("ok", testRef.current?.offsetParent.offsetLeft);
-        console.log(e);
-    })
+
+    // carouselRef.current?.addEventListener("scroll", (e) => {
+    //     console.log("ok", testRef.current?.offsetParent.offsetLeft);
+    // })
+
+    const loadingContent = loading ? <Loading/> : null
+    const errorContent = error ? <Typography>Error</Typography> : null
 
     return (
         <Box 
-            className="carousel__wrapper mt-5 relative"
+            className="carousel__wrapper mt-5 relative bg-[url('/wave2.png')] bg-center-bottom min-h-[375px]"
             ref={testRef}
         >
-            <Box className="overflow-x-scroll carousel pb-1 md:pb-3" ref={carouselRef}>
-                <Box 
-                    className="flex w-max"
-                >
-                    {
-                        mainTrand.map(item => <FilmsBlockCard key={item.id} film={item}/>)
-                    }
-                </Box>
-        </Box>
+            {loadingContent}
+            {errorContent}
+            {
+                !loading && !error ?
+                <Box className="overflow-x-scroll carousel pb-1 md:pb-2" ref={carouselRef}>
+                    <Box className="flex w-max">
+                        {
+                            films?.map(item => <FilmsBlockCard 
+                                                    key={item.id} 
+                                                    film={item} 
+                                                    checkedCard={checkedCard} 
+                                                    handleChangeCheckedCard={handleChangeCheckedCard}
+                                                    param={param}
+                                                />)
+                        }
+                    </Box>
+                </Box> : null
+            }
+
         </Box>
     )
 }
 
-const mapStateToProps = createStructuredSelector({
-    mainTrand,
-    loading,
-    error
-})
-
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    fetchMainTrand: bindActionCreators(fetchMainTrand, dispatch)
-})
-
-const connector = connect(mapStateToProps, mapDispatchToProps)
-type FilmsContentsReduxProps = ConnectedProps<typeof connector>
-
-export default connector(FilmsBlockContent);
+export default FilmsBlockContent;

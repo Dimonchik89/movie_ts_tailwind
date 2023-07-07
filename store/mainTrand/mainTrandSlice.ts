@@ -3,14 +3,16 @@ import useHttpHook from '../../hooks/useHttpHook';
 
 interface IInitialState {
     mainTrand: ISearchMovie[];
-    loading: boolean;
-    error: boolean;
+    trandLoading: boolean;
+    trandError: boolean;
+    period: string;
 }
 
 const initialState: IInitialState = {
     mainTrand: [],
-    loading: false,
-    error: false
+    trandLoading: false,
+    trandError: false,
+    period: "day"
 }
 
 export const fetchMainTrand = createAsyncThunk<ISearchResponse, string>(
@@ -25,23 +27,28 @@ export const fetchMainTrand = createAsyncThunk<ISearchResponse, string>(
 const mainTrandSlice = createSlice({
     name: "mainTrand",
     initialState,
-    reducers: {},
+    reducers: {
+        changePeriod: (state, action) => {
+            state.period = action.payload
+        }
+    },
     extraReducers: builder => {
         builder
             .addCase(fetchMainTrand.pending, state => {
-                state.loading = true;
-                state.error = false;
+                state.trandLoading = true;
+                state.trandError = false;
             })
             .addCase(fetchMainTrand.fulfilled, (state, action) => {
-                state.loading = false;
+                state.trandLoading = false;
                 state.mainTrand = action.payload.results;
             })
             .addCase(fetchMainTrand.rejected, state => {
-                state.loading = false;
-                state.error = true;
+                state.trandLoading = false;
+                state.trandError = true;
             })
     }
 })
 
 const { actions, reducer } = mainTrandSlice;
+export const { changePeriod } = actions
 export default reducer

@@ -5,9 +5,10 @@ interface IFilmsBlockButtonProps {
     title: string;
     handleChange: (e: React.MouseEvent<HTMLButtonElement>) => void;
     activeButton: string;
+    atr: string;
 }
 
-const FilmsBlockButton: React.FC<IFilmsBlockButtonProps> = ({title, handleChange, activeButton}) => {
+const FilmsBlockButton: React.FC<IFilmsBlockButtonProps> = ({title, handleChange, activeButton, atr}) => {
     const buttonRef = useRef<HTMLButtonElement>(null)
     const [style, setStyle] = useState("form-block__button")
 
@@ -22,7 +23,7 @@ const FilmsBlockButton: React.FC<IFilmsBlockButtonProps> = ({title, handleChange
     return (
         <Button 
             className={style}
-            data-btn={title}
+            data-btn={atr}
             onClick={handleChange} 
             ref={buttonRef}  
         >

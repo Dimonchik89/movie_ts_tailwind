@@ -12,7 +12,7 @@ const BlurImage: React.FC<any> = ({src, propStyle, ...props}) => {
         <Image
             {...props}
             src={src}
-            objectFit="cover"
+            // objectFit="cover"
             className={cn(
                 `duration-700 ease-in-out ${propStyle}`,
                 isLoading

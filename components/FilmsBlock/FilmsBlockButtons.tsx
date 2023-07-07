@@ -1,9 +1,14 @@
-import { Box, Button } from "@mui/material"
+import { Box } from "@mui/material"
 import FilmsBlockButton from "./FilmsBlockButton"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
-const FilmsBlockButtons = () => {
-    const [activeButton, setActiveButton] = useState<any>("Сегодня")
+interface IFilmsBlockButtonsProps{
+    buttonsArray: Array<IButton>;
+    changeParams: (arg: string) => void;
+    param: string;
+}
+
+const FilmsBlockButtons: React.FC<IFilmsBlockButtonsProps> = ({buttonsArray, changeParams, param}) => {
     const bgRef = useRef<HTMLElement>()
     const containerRer = useRef<HTMLElement>()
 
@@ -11,7 +16,10 @@ const FilmsBlockButtons = () => {
         const offsetLeft = e.currentTarget.offsetLeft
         const buttonWidth = e.currentTarget.clientWidth
         
-        setActiveButton(e.currentTarget.textContent)
+        if(e.currentTarget.dataset.btn) {
+            changeParams(e.currentTarget.dataset.btn)
+        }
+        
         if(bgRef.current !== undefined) {
             bgRef.current.style.transform = `translateX(${offsetLeft}px)`
             bgRef.current.style.width = `${buttonWidth}px`
@@ -25,22 +33,21 @@ const FilmsBlockButtons = () => {
         }
     }, [containerRer])
 
+    const buttonsContent = buttonsArray.map(item => <FilmsBlockButton 
+                                                        key={item.atr}
+                                                        title={item.title} 
+                                                        atr={item.atr}
+                                                        handleChange={handleChange}
+                                                        activeButton={param}
+                                                    />)
+
     return (
         <Box className="ml-3">
             <Box 
                 ref={containerRer}
                 className="border-2 border-darkBlue rounded-3xl overflow-hidden relative"
             >
-                <FilmsBlockButton 
-                    title="Сегодня" 
-                    handleChange={handleChange}
-                    activeButton={activeButton}
-                />
-                <FilmsBlockButton 
-                    title="На этой неделе" 
-                    handleChange={handleChange}
-                    activeButton={activeButton}
-                />
+                {buttonsContent}
                 <Box 
                     className="active__btn"
                     ref={bgRef}
@@ -50,4 +57,5 @@ const FilmsBlockButtons = () => {
         </Box>
     )
 }
+
 export default FilmsBlockButtons

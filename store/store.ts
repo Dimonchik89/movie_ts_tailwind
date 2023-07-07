@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import searchFilms from "./search/searchSlice";
 import mainTrand from "./mainTrand/mainTrandSlice";
+import mainPopular from "./mainPopular/mainPopularSlice";
 
 const store = configureStore({
     reducer: {
         searchFilms,
-        mainTrand
+        mainTrand,
+        mainPopular
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware(),
     devTools: process.env.NODE_ENV !== "production"

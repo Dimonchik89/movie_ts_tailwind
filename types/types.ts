@@ -11,7 +11,8 @@ interface ISearchMovie {
     media_type: string,
     genre_ids: Array<number>,
     popularity: number,
-    release_date: string,
+    release_date?: string,
+    first_air_date?: string,
     video: boolean,
     vote_average: number,
     vote_count: number
@@ -22,4 +23,9 @@ interface ISearchResponse {
     results: Array<ISearchMovie>,
     total_pages: number,
     total_results: number
+}
+
+interface IButton {
+    title: string;
+    atr: string;
 }

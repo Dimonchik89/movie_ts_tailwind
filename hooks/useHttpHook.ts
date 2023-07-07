@@ -10,8 +10,15 @@ const useHttpHook = (url: string) => {
     };
 
     const getData = async () => {
-        const response = await axios(url, options)
-        return await response.data
+        try {
+            const response = await axios(url, options)
+            return await response.data
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        }
+
     }
 
     return { getData }
